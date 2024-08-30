@@ -15,6 +15,17 @@ class UserController {
         }
     });
   }
+
+  findByNameOrUserName(req: Request, res: Response) {
+    const { name } = req.query;
+    userRepository.findByNameOrUserName(name as string, (users) => {
+      if (users.length > 0) {
+        res.json(users);
+      } else {
+        res.status(404).send('Nenhum usuário encontrado.');
+      }
+    });
+  }
 }
 
 export default new UserController();
