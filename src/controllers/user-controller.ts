@@ -16,10 +16,21 @@ class UserController {
     });
   }
 
+  findByUserName(req: Request, res: Response) {
+    const { userName } = req.params;
+    userRepository.findByUserName(userName as string, (user) => {
+      if(user) {
+        res.json(user);
+      } else {
+        res.status(404).send('Usuário não encontrado.');
+      }
+    });
+  }
+
   findByNameOrUserName(req: Request, res: Response) {
     const { name } = req.query;
     userRepository.findByNameOrUserName(name as string, (users) => {
-      if (users.length > 0) {
+      if(users.length > 0) {
         res.json(users);
       } else {
         res.status(404).send('Nenhum usuário encontrado.');
