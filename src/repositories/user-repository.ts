@@ -7,12 +7,17 @@ class UserRepository extends BaseRepository<User> {
     super('users');
   }
 
-  findByNameOrUserName(name: string, callback: (user?: User) => void): void {
-    const sql = 'SELECT * FROM users WHERE name LIKE? OR username LIKE? LIMIT 8';
+  findByNameOrUserName(name: string, callback: (users: User[]) => void): void {
+    const sql = 'SELECT * FROM users WHERE name LIKE ? OR userName LIKE ? LIMIT 8';
     const params = [`%${name}%`, `%${name}%`];
-    database.get(sql, params, (_err, row) => {
-      const user = row as User | undefined;
-      callback(user);
+    database.all(sql, params, (err, rows) => {
+      if (err) {
+        console.error('Erro ao buscar usuários:', err);
+        callback([]);
+        return;
+      }
+      const users = rows as User[];
+      callback(users);
     });
   }
 }
