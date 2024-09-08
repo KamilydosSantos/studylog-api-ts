@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserService from '../services/UserService';
+import { UserFollows } from '../entities/UserFollows';
 
 class UserController {
   async create(req: Request, res: Response): Promise<void> {
@@ -42,6 +43,20 @@ class UserController {
       }
     } catch (error) {
       res.status(500).send('Erro ao buscar usuários.');
+    }
+  }
+
+  async getUserFollowers(req: Request, res: Response): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const userFollowers = await UserService.getUserFollowers(parseInt(userId));
+      if (userFollowers) {
+        res.json(userFollowers);
+      } else {
+        res.status(404).send('Usuário não encontrado.');
+      }
+    } catch (error) {
+      res.status(500).send('Erro ao buscar seguidores do usuário.');
     }
   }
 }

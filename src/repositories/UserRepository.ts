@@ -1,12 +1,15 @@
 import { Like, Repository } from "typeorm";
 import { User } from "../entities/User";
 import { AppDataSource } from "../database/data-source";
+import { UserFollows } from "../entities/UserFollows";
 
 export class UserRepository {
   private repository: Repository<User>;
+  private userFollowsRepository: Repository<UserFollows>;
 
   constructor() {
     this.repository = AppDataSource.getRepository(User);
+    this.userFollowsRepository = AppDataSource.getRepository(UserFollows);
   }
 
   async createUser(user: Partial<User>): Promise<User> {
@@ -40,6 +43,24 @@ export class UserRepository {
     } catch (error) {
       console.error('Erro ao buscar usuários pelo nome ou userName:', error);
       throw new Error('Erro ao buscar usuários.');
+    }
+  }
+
+  async getUserFollowers(userId: number): Promise<User[]> {
+    try {
+      const user = await this.repository.findOne({
+        relations: ['follower'],
+        where: { id: userId }
+      });
+
+      if (!user) {
+        throw new Error('Usuário não encontrado.');
+      }
+      
+      return user?.follower?.map(follower => follower.follower) || [];
+    } catch (error) {
+      console.error('Erro ao buscar seguidores do usuário:', error);
+      throw new Error('Erro ao buscar seguidores.');
     }
   }
 }

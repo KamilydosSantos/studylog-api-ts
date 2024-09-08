@@ -30,6 +30,15 @@ class UserService {
       throw new Error('Erro ao buscar usuários.');
     }
   }
+
+  async getUserFollowers(userId: number): Promise<User[]> {
+    try {
+      const followers = await userRepository.getUserFollowers(userId);
+      return followers;
+    } catch (error) {
+      throw new Error('Erro ao buscar seguidores do usuário.');
+    }
+  }
 }
 
 export default new UserService();
