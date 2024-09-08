@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from "typeorm";
+import { UserFollows } from "./UserFollows";
 
 @Entity('users')
 export class User {
@@ -25,4 +26,12 @@ export class User {
 
   @Column({ nullable: true })
   coverPicture?: string;
+
+  @OneToMany(() => UserFollows, (userFollows) => userFollows.follower)
+  @JoinColumn({ name: "id", referencedColumnName: "followerId" })
+  follower?: UserFollows[];
+
+  @OneToMany(() => UserFollows, (userFollows) => userFollows.following)
+  @JoinColumn({ name: "id", referencedColumnName: "followingId" })
+  following?: UserFollows[];
 }
